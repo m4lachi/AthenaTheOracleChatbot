@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Athena’s Oracle Chatbot</title>
+  <style>
+    body {
+      font-family: "Georgia", serif;
+      background: #f8f5f0;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+    h1 {
+      color: #a37c27;
+      text-shadow: 1px 1px #e1c16e;
+    }
+    .chat-box {
+      width: 100%;
+      max-width: 600px;
+      background: #fff;
+      border: 2px solid #a37c27;
+      border-radius: 10px;
+      padding: 1rem;
+      overflow-y: auto;
+      height: 400px;
+      margin-bottom: 1rem;
+    }
+    .message {
+      margin: 0.5rem 0;
+    }
+    .user {
+      text-align: right;
+      color: #006699;
+    }
+    .bot {
+      text-align: left;
+      color: #a37c27;
+      font-weight: bold;
+    }
+    form {
+      display: flex;
+      width: 100%;
+      max-width: 600px;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 5px 0 0 5px;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      border: none;
+      background: #a37c27;
+      color: white;
+      font-weight: bold;
+      border-radius: 0 5px 5px 0;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #c19a46;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔮 Athena’s Oracle</h1>
+  <div class="chat-box" id="chatBox"></div>
+
+  <form id="chatForm">
+    <input type="text" id="userInput" placeholder="Ask Athena..." required />
+    <button type="submit">Ask</button>
+  </form>
+
+  <script>
+    const form = document.getElementById("chatForm");
+    const chatBox = document.getElementById("chatBox");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const input = document.getElementById("userInput");
+      const question = input.value;
+
+      // Add user message
+      const userMsg = document.createElement("div");
+      userMsg.className = "message user";
+      userMsg.textContent = "You: " + question;
+      chatBox.appendChild(userMsg);
+
+      input.value = "";
+
+      // Send to backend (Flask/Streamlit endpoint)
+      const response = await fetch("/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question })
+      });
+
+      const data = await response.json();
+
+      // Add bot response
+      const botMsg = document.createElement("div");
+      botMsg.className = "message bot";
+      botMsg.textContent = "Athena: " + data.answer;
+      chatBox.appendChild(botMsg);
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+    });
+  </script>
+</body>
+</html>
