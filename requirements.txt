@@ -1,0 +1,4 @@
+flask>=3.0.0
+openai>=1.0.0
+python-dotenv>=1.0.0   # if you want to load your API key from a .env file
+gunicorn>=21.2.0       # if you plan to deploy on a server (production WSGI server)
